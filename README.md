@@ -34,13 +34,10 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 node version :- v18.17.0
 angular version :- 
-
+```
 
 npm install
 npm install -g @angular/cli@14.0.2
-
-```
-
 sudo fallocate -l 2G /swapfile
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
