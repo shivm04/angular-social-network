@@ -27,16 +27,17 @@ jobs:
         # Check the branch name and run the appropriate deployment based on the branch
         if [ "${{ github.ref }}" == "refs/heads/main" ]; then
           echo "Deploying to production server (main branch)"
-          ssh -o StrictHostKeyChecking=no ubuntu@3.110.48.193 "
+          ssh -o StrictHostKeyChecking=no ubuntu@prod-server-ip-address "
             cd /var/www/html/angular-social-network &&
             git checkout main &&
             git pull origin main"
         elif [ "${{ github.ref }}" == "refs/heads/development" ]; then
           echo "Deploying to development server (development branch)"
-          ssh -o StrictHostKeyChecking=no ubuntu@3.110.48.193 "
-            cd /var/www/angular-social-network &&
+          ssh -o StrictHostKeyChecking=no ubuntu@dev-server-ip-address "
+            cd /var/www/html/angular-social-network &&
             git checkout development &&
             git pull origin development"
         else
           echo "No matching branch for deployment"
+        fi
       shell: bash
