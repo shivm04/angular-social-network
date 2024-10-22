@@ -1,9 +1,10 @@
-name: Deploy Code via Pull
+name: Deploy Code via Pull (Main & Development)
 
 on:
   push:
     branches:
-      - main  # Specify the branch to trigger the action (e.g., 'main')
+      - main
+      - development  # Trigger on both 'main' and 'development' branches
 
 jobs:
   deploy:
@@ -12,7 +13,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+
     - name: Install SSH client
       run: sudo apt-get update && sudo apt-get install -y ssh
 
@@ -21,8 +22,21 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Pull latest code from GitHub on the server
+    - name: Pull latest code based on branch
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@3.110.48.193 "
-          cd /var/www/html/angular-social-network &&
-          git pull origin main"
+        # Check the branch name and run the appropriate deployment based on the branch
+        if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          echo "Deploying to production server (main branch)"
+          ssh -o StrictHostKeyChecking=no ubuntu@3.110.48.193 "
+            cd /var/www/html/angular-social-network &&
+            git checkout main &&
+            git pull origin main"
+        elif [ "${{ github.ref }}" == "refs/heads/development" ]; then
+          echo "Deploying to development server (development branch)"
+          ssh -o StrictHostKeyChecking=no ubuntu@3.110.48.193 "
+            cd /var/www/angular-social-network &&
+            git checkout development &&
+            git pull origin development"
+        else
+          echo "No matching branch for deployment"
+      shell: bash
